@@ -1,0 +1,87 @@
+openapi: "3.0.1"
+info:
+  title: Repositories Trees Service
+  version: "1.0.0"
+
+paths:
+  /repos-trees:
+    get:
+      summary: create a repo tree
+      tags:
+        - Repos Tree
+      parameters:
+        - $ref: "#/components/parameters/owner_name"
+        - $ref: "#/components/parameters/repository"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/tree"
+        400:
+          description: Bad Request
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: Not Found
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/error'
+        500:
+          description: Internal Server Error
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/error'
+
+components:
+  schemas:
+    error:
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: Error message for the developer.
+          
+    tree:
+      type: array
+      items:
+        $ref: "#/components/schemas/folder"
+    
+    file:
+      type: string
+      example: "README.md"
+      
+    folder:
+      type: object
+      properties:
+        folder_name:
+          type: string
+          description: The folder name or path
+          example: "main/java/com/github"
+        
+        files:
+          type: array
+          description: List of the folder's files
+          items:
+            $ref: "#/components/schemas/file"
+    
+  parameters:
+    owner_name:
+      name: owner_name
+      in: header
+      description: The GitHub Owner Name
+      schema:
+        type: string
+        
+    repository:
+      name: repository
+      in: header
+      description: The GitHub Repository Name
+      schema:
+        type: string
